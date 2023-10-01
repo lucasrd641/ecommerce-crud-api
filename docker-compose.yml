@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: lucasdenipotti
+      POSTGRES_PASSWORD: teamviewer
+      POSTGRES_DB: ecommerce_crud_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  ecommerce-crud-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommerce_crud_db
+      SPRING_DATASOURCE_USERNAME: lucasdenipotti
+      SPRING_DATASOURCE_PASSWORD: teamviewer
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
