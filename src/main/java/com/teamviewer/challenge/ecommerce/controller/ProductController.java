@@ -73,6 +73,7 @@ public class ProductController {
     @Operation(summary = "Delete a product by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted product"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
     @DeleteMapping("/{id}")

@@ -71,6 +71,7 @@ public class OrderController {
     @Operation(summary = "Delete an order by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted order"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
     @DeleteMapping("/{id}")
