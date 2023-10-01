@@ -1,6 +1,6 @@
 package com.teamviewer.challenge.ecommerce.repository;
 
-import com.teamviewer.challenge.ecommerce.model.Order;
+import com.teamviewer.challenge.ecommerce.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

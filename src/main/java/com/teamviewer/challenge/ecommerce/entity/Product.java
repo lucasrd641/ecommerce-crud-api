@@ -1,6 +1,8 @@
-package com.teamviewer.challenge.ecommerce.model;
+package com.teamviewer.challenge.ecommerce.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +23,9 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, precision = 20, scale = 2)
+    @Column(nullable = false)
+    private Integer unitsInStock = 0;
+
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 }

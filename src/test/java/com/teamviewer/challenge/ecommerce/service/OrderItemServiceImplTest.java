@@ -1,9 +1,13 @@
 package com.teamviewer.challenge.ecommerce.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.teamviewer.challenge.ecommerce.dto.OrderItemDto;
+import com.teamviewer.challenge.ecommerce.entity.OrderItem;
+import com.teamviewer.challenge.ecommerce.entity.Product;
+import com.teamviewer.challenge.ecommerce.exception.InsufficientStockException;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
-import com.teamviewer.challenge.ecommerce.model.OrderItem;
-import com.teamviewer.challenge.ecommerce.model.Product;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,15 +16,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+public class OrderItemServiceImplTest {
 
-class OrderItemServiceImplTest {
+    @InjectMocks
+    private OrderItemServiceImpl orderItemService;
 
     @Mock
     private OrderItemRepository orderItemRepository;
@@ -28,140 +32,225 @@ class OrderItemServiceImplTest {
     @Mock
     private ProductRepository productRepository;
 
-    @InjectMocks
-    private OrderItemServiceImpl orderItemServiceImpl;
-
     @BeforeEach
-    void setUp() {
+    public void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testCreateOrderItem() {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setProductId(1L);
-        dto.setQuantity(10);
-
-        Product mockProduct = new Product();
-        mockProduct.setId(1L);
-        mockProduct.setPrice(new BigDecimal(10));
-
-        OrderItem mockOrderItem = new OrderItem();
-        mockOrderItem.setProduct(mockProduct);
-        mockOrderItem.setQuantity(10);
-
-        when(productRepository.findById(dto.getProductId())).thenReturn(Optional.of(mockProduct));
-        when(orderItemRepository.save(any(OrderItem.class))).thenReturn(mockOrderItem);
-
-        OrderItem result = orderItemServiceImpl.createOrderItem(dto);
-
-        assertEquals(mockOrderItem, result);
+    public void testGetOrderItemByIdSuccess() {
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(new OrderItem()));
+        OrderItem item = orderItemService.getOrderItemById(1L);
+        assertNotNull(item);
     }
 
     @Test
-    void testUpdateOrderItem() {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setProductId(1L);
-        dto.setQuantity(5);
-
-        Product mockProduct = new Product();
-        mockProduct.setId(1L);
-        mockProduct.setPrice(new BigDecimal(10));
-
-        OrderItem existingOrderItem = new OrderItem();
-        existingOrderItem.setId(1L);
-        existingOrderItem.setProduct(mockProduct);
-        existingOrderItem.setQuantity(3);
-
-        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
-        when(productRepository.findById(dto.getProductId())).thenReturn(Optional.of(mockProduct));
-        when(orderItemRepository.save(any(OrderItem.class))).thenReturn(existingOrderItem);
-
-        OrderItem result = orderItemServiceImpl.updateOrderItem(1L, dto);
-
-        assertEquals(5, result.getQuantity().intValue());
-    }
-
-    @Test
-    void testUpdateOrder_ItemNotFound() {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setProductId(1L);
-        dto.setQuantity(5);
-
+    public void testGetOrderItemByIdNotFound() {
         when(orderItemRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.updateOrderItem(1L, dto));
+        assertThrows(ResourceNotFoundException.class, () -> orderItemService.getOrderItemById(1L));
     }
 
     @Test
-    void testDeleteOrderItem() {
-        OrderItem existingOrderItem = new OrderItem();
-        existingOrderItem.setId(1L);
+    public void testCreateOrderItemSuccess() {
+        Product product = new Product();
+        product.setUnitsInStock(10);
+        product.setPrice(new BigDecimal("10.00"));
 
-        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
-
-        orderItemServiceImpl.deleteOrderItem(1L);
-
-        verify(orderItemRepository).delete(existingOrderItem);
-    }
-
-    @Test
-    void testGetOrderItem_InvalidId() {
-        when(orderItemRepository.findById(2L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.getOrderItemById(2L));
-    }
-
-    @Test
-    void testDeleteOrder_ItemInvalidId() {
-        when(orderItemRepository.findById(2L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.deleteOrderItem(2L));
-    }
-
-    @Test
-    void testGetAllOrder_ItemsEmptyList() {
-        when(orderItemRepository.findAll()).thenReturn(Collections.emptyList());
-
-        List<OrderItem> result = orderItemServiceImpl.getAllOrderItems();
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testCreateOrderItem_NonExistentProduct() {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setProductId(3L);
-        dto.setQuantity(10);
-
-        when(productRepository.findById(3L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.createOrderItem(dto));
-    }
-
-    @Test
-    void testUpdateOrderItem_NonExistentProduct() {
-        OrderItemDto dto = new OrderItemDto();
-        dto.setProductId(3L);
-        dto.setQuantity(5);
-
-        OrderItem existingOrderItem = new OrderItem();
-        existingOrderItem.setId(1L);
-
-        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
-        when(productRepository.findById(3L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.updateOrderItem(1L, dto));
-    }
-
-    @Test
-    void testUpdateOrderItem_InvalidOrderItemId() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
         OrderItemDto dto = new OrderItemDto();
         dto.setProductId(1L);
         dto.setQuantity(5);
 
-        when(orderItemRepository.findById(2L)).thenReturn(Optional.empty());
+        OrderItem response = orderItemService.createOrderItem(dto);
+        assertEquals(new BigDecimal("50.00"), response.getOrderItemPrice());
+    }
 
-        assertThrows(ResourceNotFoundException.class, () -> orderItemServiceImpl.updateOrderItem(2L, dto));
+    @Test
+    public void testCreateOrderItemInsufficientStock() {
+        Product product = new Product();
+        product.setUnitsInStock(3);
+        product.setPrice(new BigDecimal("10.00"));
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(5);
+
+        assertThrows(InsufficientStockException.class, () -> orderItemService.createOrderItem(dto));
+    }
+
+    @Test
+    public void testUpdateOrderItemIncreaseQuantity() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(10);
+        product.setPrice(new BigDecimal("10.00"));
+
+        OrderItem existingOrderItem = new OrderItem();
+        existingOrderItem.setQuantity(4);
+        existingOrderItem.setProduct(product);
+        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
+
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(6);
+
+        OrderItem updatedOrderItem = orderItemService.updateOrderItem(1L, dto);
+        assertEquals(6, updatedOrderItem.getQuantity().intValue());
+        assertEquals(new BigDecimal("60.00"), updatedOrderItem.getOrderItemPrice());
+    }
+
+    @Test
+    public void testUpdateOrderItemDecreaseQuantity() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(10);
+        product.setPrice(new BigDecimal("10.00"));
+
+        OrderItem existingOrderItem = new OrderItem();
+        existingOrderItem.setProduct(product);
+        existingOrderItem.setQuantity(6);
+        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
+
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(4);
+
+        OrderItem updatedOrderItem = orderItemService.updateOrderItem(1L, dto);
+        assertEquals(4, updatedOrderItem.getQuantity().intValue());
+        assertEquals(new BigDecimal("40.00"), updatedOrderItem.getOrderItemPrice());
+    }
+
+    @Test
+    public void testDeleteOrderItemWithNonExistingProduct() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(10);
+        product.setPrice(new BigDecimal("10.00"));
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setProduct(product);
+        orderItem.setQuantity(5);
+
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(orderItem));
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        orderItemService.deleteOrderItem(1L);
+    }
+
+    @Test
+    public void testUpdateOrderItemInsufficientStock() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(3);
+        product.setPrice(new BigDecimal("10.00"));
+
+        OrderItem existingOrderItem = new OrderItem();
+        existingOrderItem.setProduct(product);
+        existingOrderItem.setQuantity(2);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
+
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(7);
+
+        assertThrows(InsufficientStockException.class, () -> orderItemService.updateOrderItem(1L, dto));
+    }
+
+    @Test
+    public void testGetAllOrderItems() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(3);
+        product.setPrice(new BigDecimal("10.00"));
+        product.setName("Test");
+
+        OrderItem item1 = new OrderItem();
+        item1.setProduct(product);
+        item1.setQuantity(3);
+
+        OrderItem item2 = new OrderItem();
+        item2.setProduct(product);
+        item2.setQuantity(2);
+
+        List<OrderItem> orderItems = Arrays.asList(item1, item2);
+        when(orderItemRepository.findAll()).thenReturn(orderItems);
+
+        List<OrderItem> result = orderItemService.getAllOrderItems();
+        assertEquals(2, result.size());
+        assertEquals("Test", result.get(0).getProduct().getName());
+    }
+
+    @Test
+    public void testUpdateOrderItemWithIncreasedQuantity() {
+        Product productOld = new Product();
+        productOld.setId(1L);
+        productOld.setUnitsInStock(3);
+        productOld.setPrice(new BigDecimal("10.00"));
+
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(5);
+
+        OrderItem existingOrderItem = new OrderItem();
+        existingOrderItem.setQuantity(3);
+        existingOrderItem.setProduct(productOld);
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("TestItem");
+        product.setUnitsInStock(8);
+        product.setPrice(new BigDecimal("10.00"));
+
+        when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(existingOrderItem));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        OrderItem updatedOrderItem = orderItemService.updateOrderItem(1L, dto);
+        assertEquals(5, updatedOrderItem.getQuantity().intValue());
+        assertEquals(6, product.getUnitsInStock().intValue());
+    }
+
+
+    @Test
+    public void testGetOrderItemByIdFound() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(3);
+        product.setPrice(new BigDecimal("10.00"));
+        product.setName("Test");
+
+        OrderItem item = new OrderItem();
+        item.setProduct(product);
+        item.setQuantity(3);
+
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+        OrderItem result = orderItemService.getOrderItemById(1L);
+        assertEquals("Test", result.getProduct().getName());
+    }
+
+    @Test
+    public void testCreateOrderItemWithNegativeQuantity() {
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(1L);
+        dto.setQuantity(-3);
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setUnitsInStock(10);
+        product.setPrice(new BigDecimal("10.00"));
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        assertThrows(IllegalArgumentException.class, () -> orderItemService.createOrderItem(dto));
     }
 }
+

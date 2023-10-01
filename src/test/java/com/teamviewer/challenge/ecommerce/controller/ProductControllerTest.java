@@ -2,7 +2,7 @@ package com.teamviewer.challenge.ecommerce.controller;
 
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
-import com.teamviewer.challenge.ecommerce.model.Product;
+import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.service.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,8 @@ class ProductControllerTest {
 
     @Test
     void updateProduct_ReturnsOk() {
-        ProductDto productDto = new ProductDto("Updated Product", new BigDecimal(20));
+        ProductDto productDto = new ProductDto("TestItem", new BigDecimal("10.00"), 10);
+
         when(productService.updateProduct(anyLong(), any())).thenReturn(new Product());
 
         ResponseEntity<Product> response = productController.updateProduct(1L, productDto);
@@ -105,7 +106,8 @@ class ProductControllerTest {
     void updateProduct_ProductNotFound_ReturnsNotFound() {
         when(productService.updateProduct(anyLong(), any())).thenThrow(ResourceNotFoundException.class);
 
-        ProductDto productDto = new ProductDto("Updated Product", new BigDecimal(20));
+        ProductDto productDto = new ProductDto("TestItem", new BigDecimal("10.00"), 10);
+
 
         assertThrows(ResourceNotFoundException.class, () -> {
             productController.updateProduct(1L, productDto);

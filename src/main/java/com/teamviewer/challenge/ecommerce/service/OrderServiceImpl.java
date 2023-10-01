@@ -2,8 +2,8 @@ package com.teamviewer.challenge.ecommerce.service;
 
 import com.teamviewer.challenge.ecommerce.dto.OrderDto;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
-import com.teamviewer.challenge.ecommerce.model.Order;
-import com.teamviewer.challenge.ecommerce.model.OrderItem;
+import com.teamviewer.challenge.ecommerce.entity.Order;
+import com.teamviewer.challenge.ecommerce.entity.OrderItem;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.OrderRepository;
 import com.teamviewer.challenge.ecommerce.service.interfaces.OrderService;

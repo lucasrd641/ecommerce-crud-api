@@ -1,7 +1,7 @@
 package com.teamviewer.challenge.ecommerce.controller;
 
 import com.teamviewer.challenge.ecommerce.dto.OrderDto;
-import com.teamviewer.challenge.ecommerce.model.Order;
+import com.teamviewer.challenge.ecommerce.entity.Order;
 import com.teamviewer.challenge.ecommerce.service.OrderServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

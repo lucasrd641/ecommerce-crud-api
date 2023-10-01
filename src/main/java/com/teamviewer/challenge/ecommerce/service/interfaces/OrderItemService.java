@@ -1,7 +1,7 @@
 package com.teamviewer.challenge.ecommerce.service.interfaces;
 
 import com.teamviewer.challenge.ecommerce.dto.OrderItemDto;
-import com.teamviewer.challenge.ecommerce.model.OrderItem;
+import com.teamviewer.challenge.ecommerce.entity.OrderItem;
 
 import java.util.List;
 

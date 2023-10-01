@@ -2,7 +2,8 @@ package com.teamviewer.challenge.ecommerce.service;
 
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
-import com.teamviewer.challenge.ecommerce.model.Product;
+import com.teamviewer.challenge.ecommerce.entity.Product;
+import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,8 @@ class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private OrderItemRepository orderItemRepository;
 
     @InjectMocks
     private ProductServiceImpl productServiceImpl;
@@ -69,7 +72,7 @@ class ProductServiceImplTest {
 
     @Test
     void testCreateProduct() {
-        ProductDto dto = new ProductDto("Test Product", new BigDecimal(10));
+        ProductDto productDto = new ProductDto("TestItem", new BigDecimal("10.00"), 10);
 
         Product mockProduct = new Product();
         mockProduct.setName("Test Product");
@@ -77,7 +80,7 @@ class ProductServiceImplTest {
 
         when(productRepository.save(any(Product.class))).thenReturn(mockProduct);
 
-        Product result = productServiceImpl.createProduct(dto);
+        Product result = productServiceImpl.createProduct(productDto);
 
         assertNotNull(result);
         assertEquals("Test Product", result.getName());
@@ -86,16 +89,18 @@ class ProductServiceImplTest {
 
     @Test
     void testUpdateProduct() {
-        ProductDto dto = new ProductDto("Updated Product", new BigDecimal(20));
+        ProductDto productDto = new ProductDto("Updated Product", new BigDecimal(20), 10);
+
 
         Product existingProduct = new Product();
         existingProduct.setName("Old Product");
         existingProduct.setPrice(new BigDecimal(10));
+        existingProduct.setUnitsInStock(2);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
         when(productRepository.save(any(Product.class))).thenReturn(existingProduct);
 
-        Product result = productServiceImpl.updateProduct(1L, dto);
+        Product result = productServiceImpl.updateProduct(1L, productDto);
 
         assertNotNull(result);
         assertEquals("Updated Product", result.getName());
@@ -114,17 +119,20 @@ class ProductServiceImplTest {
     }
     @Test
     void testCreateProduct_NullDto() {
-        assertThrows(NullPointerException.class, () -> productServiceImpl.createProduct(null));
+        assertThrows(IllegalArgumentException.class, () -> productServiceImpl.createProduct(null));
     }
 
     @Test
     void testUpdateProduct_NullDto() {
-        assertThrows(ResourceNotFoundException.class, () -> productServiceImpl.updateProduct(1L, null));
+        assertThrows(IllegalArgumentException.class, () -> productServiceImpl.updateProduct(1L, null));
     }
 
     @Test
     void testUpdateProduct_NonExistingId() {
         ProductDto mockDto = new ProductDto();
+        mockDto.setPrice(new BigDecimal(2));
+        mockDto.setName("Test");
+        mockDto.setUnitsInStock(3);
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> productServiceImpl.updateProduct(1L, mockDto));
@@ -136,5 +144,4 @@ class ProductServiceImplTest {
 
         assertThrows(ResourceNotFoundException.class, () -> productServiceImpl.deleteProduct(1L));
     }
-
 }

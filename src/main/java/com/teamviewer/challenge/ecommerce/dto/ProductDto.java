@@ -1,9 +1,6 @@
 package com.teamviewer.challenge.ecommerce.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +19,8 @@ public class ProductDto {
     @DecimalMin(value = "0.01", inclusive = true, message = "Price cannot be negative or zero")
     @Digits(integer = 10, fraction = 2, message = "Price can have at most 10 integer digits and 2 fraction digits")
     private BigDecimal price;
+
+    @NotNull(message = "UnitsInStock cannot be null")
+    @Positive(message = "UnitsInStock must be greater than zero")
+    private Integer unitsInStock;
 }

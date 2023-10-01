@@ -1,4 +1,4 @@
-package com.teamviewer.challenge.ecommerce.model;
+package com.teamviewer.challenge.ecommerce.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @Column(nullable = false, precision = 20, scale = 2)
+    @Column(nullable = false, precision = 300, scale = 2)
     private BigDecimal totalPrice;
 
     public void addOrderItem(OrderItem orderItem) {

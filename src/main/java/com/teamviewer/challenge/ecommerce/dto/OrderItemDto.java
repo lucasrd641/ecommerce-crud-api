@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class OrderItemDto {
     @NotNull(message = "Product ID cannot be null")
-    @Positive(message = "Quantity must be greater than zero")
+    @Positive(message = "Product ID must be greater than zero")
     private Long productId;
 
     @NotNull(message = "Quantity cannot be null")

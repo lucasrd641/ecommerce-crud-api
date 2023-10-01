@@ -1,7 +1,7 @@
 package com.teamviewer.challenge.ecommerce.controller;
 
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
-import com.teamviewer.challenge.ecommerce.model.Product;
+import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.service.ProductServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,7 +60,8 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated product"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "Product not found")
+            @ApiResponse(responseCode = "404", description = "Product not found"),
+            @ApiResponse(responseCode = "409", description = "Product with the same name already exists")
     })
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
