@@ -16,10 +16,13 @@ This is a Spring Boot application providing a RESTful API for a simple e-commerc
 - OrderItem: Id, ProductId, Quantity, OrderItemPrice(ProductPrice * Quantity)
 - Order: Id, CustomerName, Address, ListOfOrderItems, TotalPrice(Sum of OrdemItemPrice in List)
 - Constraints:
-  - There cannot be products with the same name
+  - There cannot be products with the same name, and they are not deleted along with the orders, just their "Stock" changes
   - When an OrderItem is Created, its "quantity" must not surpass the Products "unitsInStock"
-  - A Product cannot be Deleted while an OrderItem is active
-  - 
+  - A Product cannot be Deleted or Updated while an OrderItem is active
+  - Once an Order is created with an OrderItem, it cannot be altered or deleted, unless the Order is deleted or updated to remove it
+  - If an OrderItem is deleted and is not inside an Order, Product gets it´s stock refilled
+  - Order is the terminal operation, it holds an Array of OrderItems for the customer and TotalPrice for the OrderItems, and once it is deleted, the Product´s stock does not return
+  - A Customer can only have one Order open at a time, and since we don´t have CRUD operations for them, it will be filtered by name
 - I opted to use Lombok for readability and simplicity
 - Errors are handled by GlobalExceptionHandler, and they all have a default format of ErrorResponse
 - There are 57 Tests in total, covering the Controllers and Services that run after every `mv clean install` or `mvn test`
@@ -34,7 +37,7 @@ This is a Spring Boot application providing a RESTful API for a simple e-commerc
 - Dockerized application for easy setup and scalability.
 - API documentation using OpenAPI 3.0.
 - Automated tests with JUnit and Mockito.
-- Graceful error handling and appropriate HTTP status codes.
+- Error handling and appropriate HTTP status codes.
 - Lombok used to minimize boilerplate code and improve readability
 
 ## Prerequisites

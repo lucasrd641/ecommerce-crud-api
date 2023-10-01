@@ -35,4 +35,8 @@ public class OrderItem {
 
     @Column(nullable = false, precision = 20, scale = 2)
     private BigDecimal orderItemPrice;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

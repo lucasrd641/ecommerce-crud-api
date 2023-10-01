@@ -1,6 +1,9 @@
 package com.teamviewer.challenge.ecommerce.service;
 
 import com.teamviewer.challenge.ecommerce.dto.OrderDto;
+import com.teamviewer.challenge.ecommerce.dto.ProductDto;
+import com.teamviewer.challenge.ecommerce.entity.Product;
+import com.teamviewer.challenge.ecommerce.exception.DuplicateElementException;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.entity.Order;
 import com.teamviewer.challenge.ecommerce.entity.OrderItem;
@@ -33,12 +36,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(OrderDto orderDto) {
+        if (!isValid(orderDto)) throw new IllegalArgumentException("OrderDto is not valid");
+        if (orderRepository.existsByCustomerNameIgnoreCase(orderDto.getCustomerName())) {
+            throw new IllegalArgumentException("Order with the same customer name already exists.");
+        }
         Order order = new Order();
         return processOrder(orderDto, order);
     }
 
     @Override
     public Order updateOrder(Long id, OrderDto orderDto) {
+        if (!isValid(orderDto)) throw new IllegalArgumentException("OrderDto is not valid");
+        Order existingOrderWithSameCustomerName = orderRepository.findByCustomerNameIgnoreCase(orderDto.getCustomerName());
+
+        if (existingOrderWithSameCustomerName != null && !existingOrderWithSameCustomerName.getId().equals(id)) {
+            throw new DuplicateElementException("This customer already has an order in their name");
+        }
         Order order = getOrderById(id);
         return processOrder(orderDto, order);
     }
@@ -51,7 +64,10 @@ public class OrderServiceImpl implements OrderService {
         if (orderItems.size() != orderDto.getOrderItemIds().size()) {
             throw new ResourceNotFoundException("Some OrderItem IDs provided were not found");
         }
-        orderItems.forEach(order::addOrderItem);
+        orderItems.forEach(orderItem -> {
+            orderItem.setOrder(order);
+            order.addOrderItem(orderItem);
+        });
 
         BigDecimal totalPrice = orderItems.stream()
                 .map(OrderItem::getOrderItemPrice)
@@ -65,4 +81,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderById(id);
         orderRepository.delete(order);
     }
+
+    boolean isValid(OrderDto orderDto) {
+        if (orderDto == null) return false;
+        if (orderDto.getOrderItemIds() == null) return false;
+        if (orderDto.getOrderItemIds().isEmpty()) return false;
+        if (orderDto.getCustomerName().isBlank()) return false;
+        return !orderDto.getAddress().isBlank();
+    }
+
 }

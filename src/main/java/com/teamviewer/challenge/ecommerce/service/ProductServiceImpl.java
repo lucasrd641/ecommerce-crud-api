@@ -10,6 +10,7 @@ import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import com.teamviewer.challenge.ecommerce.service.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -64,11 +65,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(productToUpdate);
     }
 
-    boolean isValid(ProductDto orderItemDto) {
-        if (orderItemDto == null) return false;
-        if (orderItemDto.getPrice().signum() < 0) return false;
-        if (orderItemDto.getName().isBlank()) return false;
-        return orderItemDto.getUnitsInStock() >= 0;
+    boolean isValid(ProductDto productDto) {
+        if (productDto == null) return false;
+        if (productDto.getPrice().signum() < 0) return false;
+        if (productDto.getName().isBlank()) return false;
+        return productDto.getUnitsInStock() >= 0;
     }
 
     @Override

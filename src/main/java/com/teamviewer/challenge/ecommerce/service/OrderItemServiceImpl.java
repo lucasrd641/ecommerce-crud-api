@@ -6,10 +6,12 @@ import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.entity.OrderItem;
 import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
+import com.teamviewer.challenge.ecommerce.repository.OrderRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import com.teamviewer.challenge.ecommerce.service.interfaces.OrderItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
     @Override
@@ -56,6 +59,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItem updateOrderItem(Long id, OrderItemDto orderItemDto) {
         if (!isValid(orderItemDto)) throw new IllegalArgumentException("OrderItemDto is not valid");
+        boolean orderExists = orderRepository.existsByOrderItemId(id);
+        if(orderExists) {
+            throw new IllegalStateException("Cannot update/delete OrderItem because it is associated with an existing Order.");
+        }
         Product product = productRepository.findById(orderItemDto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + orderItemDto.getProductId()));
 
@@ -85,7 +92,11 @@ public class OrderItemServiceImpl implements OrderItemService {
     public void deleteOrderItem(Long id) {
         OrderItem orderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order item not found with id: " + id));
+        boolean orderExists = orderRepository.existsByOrderItemId(id);
 
+        if(orderExists) {
+            throw new IllegalStateException("Cannot update/delete OrderItem because it is associated with an existing Order.");
+        }
         Product product = productRepository.findById(orderItem.getProduct().getId()).orElse(null);
 
         if (product != null) {
@@ -97,7 +108,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     boolean isValid(OrderItemDto orderItemDto) {
-        if (orderItemDto.getQuantity() < 0) return false;
+        if (orderItemDto.getQuantity() <= 0) return false;
         return orderItemDto.getProductId() != null;
     }
 

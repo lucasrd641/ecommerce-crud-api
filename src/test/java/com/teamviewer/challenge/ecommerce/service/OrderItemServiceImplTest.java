@@ -9,6 +9,7 @@ import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.exception.InsufficientStockException;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
+import com.teamviewer.challenge.ecommerce.repository.OrderRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ public class OrderItemServiceImplTest {
 
     @Mock
     private OrderItemRepository orderItemRepository;
+    @Mock
+    private OrderRepository orderRepository;
 
     @Mock
     private ProductRepository productRepository;
