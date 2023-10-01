@@ -4,7 +4,6 @@ import com.teamviewer.challenge.ecommerce.dto.ProductDto;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.model.Product;
 import com.teamviewer.challenge.ecommerce.service.ProductServiceImpl;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

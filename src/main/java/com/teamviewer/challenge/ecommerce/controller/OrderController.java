@@ -58,8 +58,8 @@ public class OrderController {
     @Operation(summary = "Update an existing order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated order"),
-            @ApiResponse(responseCode = "404", description = "Order not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid order input")
+            @ApiResponse(responseCode = "400", description = "Invalid order input"),
+            @ApiResponse(responseCode = "404", description = "Order not found")
     })
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderDto orderDto) {

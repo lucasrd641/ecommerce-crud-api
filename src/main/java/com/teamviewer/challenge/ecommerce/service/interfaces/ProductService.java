@@ -2,6 +2,7 @@ package com.teamviewer.challenge.ecommerce.service.interfaces;
 
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
 import com.teamviewer.challenge.ecommerce.model.Product;
+
 import java.util.List;
 
 public interface ProductService {

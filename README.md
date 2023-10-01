@@ -48,7 +48,7 @@ This is a Spring Boot application providing a RESTful API for a simple e-commerc
 - Using Docker: 
   - `docker-compose up`
 
-- Access the OpenAPI documentation at `http://localhost:8080/swagger-ui/index.html`.
+- Access the OpenAPI documentation at `http://localhost:8080/v3/swagger-ui/index.html`.
 
 ## Testing
 

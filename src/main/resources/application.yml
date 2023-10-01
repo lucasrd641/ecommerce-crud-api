@@ -17,10 +17,12 @@ server:
   port: 8080
 
 springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
   api-docs:
-    path: /api-docs
+    path: /v3/api-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /v3/swagger-ui.html
 
 logging:
   level:
