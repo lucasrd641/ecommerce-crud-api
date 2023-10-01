@@ -1,17 +1,16 @@
 package com.teamviewer.challenge.ecommerce.service;
 
 import com.teamviewer.challenge.ecommerce.dto.OrderItemDto;
-import com.teamviewer.challenge.ecommerce.exception.InsufficientStockException;
-import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.entity.OrderItem;
 import com.teamviewer.challenge.ecommerce.entity.Product;
+import com.teamviewer.challenge.ecommerce.exception.InsufficientStockException;
+import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.OrderRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import com.teamviewer.challenge.ecommerce.service.interfaces.OrderItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -60,14 +59,13 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItem updateOrderItem(Long id, OrderItemDto orderItemDto) {
         if (!isValid(orderItemDto)) throw new IllegalArgumentException("OrderItemDto is not valid");
         boolean orderExists = orderRepository.existsByOrderItemId(id);
-        if(orderExists) {
+        if (orderExists) {
             throw new IllegalStateException("Cannot update/delete OrderItem because it is associated with an existing Order.");
         }
         Product product = productRepository.findById(orderItemDto.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + orderItemDto.getProductId()));
 
         OrderItem orderItem = getOrderItemById(id);
-
         int quantityDifference = orderItemDto.getQuantity() - orderItem.getQuantity();
 
         if (quantityDifference > 0) {
@@ -75,9 +73,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 throw new InsufficientStockException("Not enough units in stock for product: " + product.getName());
             }
             product.setUnitsInStock(product.getUnitsInStock() - quantityDifference);
-        } else {
-            product.setUnitsInStock(product.getUnitsInStock() + Math.abs(quantityDifference));
-        }
+        } else product.setUnitsInStock(product.getUnitsInStock() + Math.abs(quantityDifference));
 
         productRepository.save(product);
         orderItem.setProduct(product);
@@ -87,14 +83,13 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemRepository.save(orderItem);
     }
 
-
     @Override
     public void deleteOrderItem(Long id) {
         OrderItem orderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order item not found with id: " + id));
         boolean orderExists = orderRepository.existsByOrderItemId(id);
 
-        if(orderExists) {
+        if (orderExists) {
             throw new IllegalStateException("Cannot update/delete OrderItem because it is associated with an existing Order.");
         }
         Product product = productRepository.findById(orderItem.getProduct().getId()).orElse(null);

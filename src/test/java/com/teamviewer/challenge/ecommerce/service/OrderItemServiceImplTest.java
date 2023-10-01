@@ -1,8 +1,5 @@
 package com.teamviewer.challenge.ecommerce.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.teamviewer.challenge.ecommerce.dto.OrderItemDto;
 import com.teamviewer.challenge.ecommerce.entity.OrderItem;
 import com.teamviewer.challenge.ecommerce.entity.Product;
@@ -17,10 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 public class OrderItemServiceImplTest {
 
@@ -31,7 +32,6 @@ public class OrderItemServiceImplTest {
     private OrderItemRepository orderItemRepository;
     @Mock
     private OrderRepository orderRepository;
-
     @Mock
     private ProductRepository productRepository;
 
@@ -41,20 +41,20 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testGetOrderItemByIdSuccess() {
+    public void testGetOrderItemById_Success() {
         when(orderItemRepository.findById(1L)).thenReturn(Optional.of(new OrderItem()));
         OrderItem item = orderItemService.getOrderItemById(1L);
         assertNotNull(item);
     }
 
     @Test
-    public void testGetOrderItemByIdNotFound() {
+    public void testGetOrderItemById_NotFound() {
         when(orderItemRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> orderItemService.getOrderItemById(1L));
     }
 
     @Test
-    public void testCreateOrderItemSuccess() {
+    public void testCreateOrderItem_Success() {
         Product product = new Product();
         product.setUnitsInStock(10);
         product.setPrice(new BigDecimal("10.00"));
@@ -70,7 +70,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testCreateOrderItemInsufficientStock() {
+    public void testCreateOrderItem_InsufficientStock() {
         Product product = new Product();
         product.setUnitsInStock(3);
         product.setPrice(new BigDecimal("10.00"));
@@ -84,7 +84,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testUpdateOrderItemIncreaseQuantity() {
+    public void testUpdateOrder_ItemIncreaseQuantity() {
         Product product = new Product();
         product.setId(1L);
         product.setUnitsInStock(10);
@@ -107,7 +107,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testUpdateOrderItemDecreaseQuantity() {
+    public void testUpdateOrder_ItemDecreaseQuantity() {
         Product product = new Product();
         product.setId(1L);
         product.setUnitsInStock(10);
@@ -130,7 +130,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testDeleteOrderItemWithNonExistingProduct() {
+    public void testDeleteOrderItem_WithNonExistingProduct() {
         Product product = new Product();
         product.setId(1L);
         product.setUnitsInStock(10);
@@ -147,7 +147,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testUpdateOrderItemInsufficientStock() {
+    public void testUpdateOrder_ItemInsufficientStock() {
         Product product = new Product();
         product.setId(1L);
         product.setUnitsInStock(3);
@@ -192,7 +192,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testUpdateOrderItemWithIncreasedQuantity() {
+    public void testUpdateOrderItem_WithIncreasedQuantity() {
         Product productOld = new Product();
         productOld.setId(1L);
         productOld.setUnitsInStock(3);
@@ -223,7 +223,7 @@ public class OrderItemServiceImplTest {
 
 
     @Test
-    public void testGetOrderItemByIdFound() {
+    public void testGetOrderItemById_Found() {
         Product product = new Product();
         product.setId(1L);
         product.setUnitsInStock(3);
@@ -241,7 +241,7 @@ public class OrderItemServiceImplTest {
     }
 
     @Test
-    public void testCreateOrderItemWithNegativeQuantity() {
+    public void testCreateOrderItem_WithNegativeQuantity() {
         OrderItemDto dto = new OrderItemDto();
         dto.setProductId(1L);
         dto.setQuantity(-3);

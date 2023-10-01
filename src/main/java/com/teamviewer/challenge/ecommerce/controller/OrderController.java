@@ -48,7 +48,8 @@ public class OrderController {
     @Operation(summary = "Create a new order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created order"),
-            @ApiResponse(responseCode = "400", description = "Invalid order input")
+            @ApiResponse(responseCode = "400", description = "Invalid order input"),
+            @ApiResponse(responseCode = "409", description = "Order with the same customerName already exists")
     })
     @PostMapping
     public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderDto order) {
@@ -59,7 +60,8 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated order"),
             @ApiResponse(responseCode = "400", description = "Invalid order input"),
-            @ApiResponse(responseCode = "404", description = "Order not found")
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "409", description = "Product with the same name already exists")
     })
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderDto orderDto) {

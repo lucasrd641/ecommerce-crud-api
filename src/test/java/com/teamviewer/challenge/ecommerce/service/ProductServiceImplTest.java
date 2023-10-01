@@ -1,8 +1,8 @@
 package com.teamviewer.challenge.ecommerce.service;
 
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
-import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.entity.Product;
+import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +91,6 @@ class ProductServiceImplTest {
     void testUpdateProduct() {
         ProductDto productDto = new ProductDto("Updated Product", new BigDecimal(20), 10);
 
-
         Product existingProduct = new Product();
         existingProduct.setName("Old Product");
         existingProduct.setPrice(new BigDecimal(10));
@@ -117,6 +116,7 @@ class ProductServiceImplTest {
 
         verify(productRepository).delete(mockProduct);
     }
+
     @Test
     void testCreateProduct_NullDto() {
         assertThrows(IllegalArgumentException.class, () -> productServiceImpl.createProduct(null));

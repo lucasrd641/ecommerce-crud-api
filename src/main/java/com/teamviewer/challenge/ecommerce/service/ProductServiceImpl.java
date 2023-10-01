@@ -1,16 +1,14 @@
 package com.teamviewer.challenge.ecommerce.service;
 
-import com.teamviewer.challenge.ecommerce.dto.OrderItemDto;
 import com.teamviewer.challenge.ecommerce.dto.ProductDto;
+import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.exception.DuplicateElementException;
 import com.teamviewer.challenge.ecommerce.exception.ResourceNotFoundException;
-import com.teamviewer.challenge.ecommerce.entity.Product;
 import com.teamviewer.challenge.ecommerce.repository.OrderItemRepository;
 import com.teamviewer.challenge.ecommerce.repository.ProductRepository;
 import com.teamviewer.challenge.ecommerce.service.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

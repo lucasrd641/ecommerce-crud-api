@@ -1,4 +1,4 @@
-package com.teamviewer.challenge.ecommerce.model.responses;
+package com.teamviewer.challenge.ecommerce.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

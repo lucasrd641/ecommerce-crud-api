@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "Ecommerce CRUD API", version = "1.0", description = "Ecommerce CRUD challenge by Lucas Denipotti"))
 public class EcommerceCrudApiApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(EcommerceCrudApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(EcommerceCrudApiApplication.class, args);
+    }
 }

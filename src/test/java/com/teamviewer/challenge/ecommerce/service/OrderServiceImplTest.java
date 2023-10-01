@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class OrderServiceImplTest {
 
@@ -62,7 +62,7 @@ public class OrderServiceImplTest {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("123 Street");
-        orderDto.setOrderItemIds(Arrays.asList(1L, 2L)); // let's assume these are the order item IDs provided in the DTO
+        orderDto.setOrderItemIds(Arrays.asList(1L, 2L));
 
         OrderItem item1 = new OrderItem();
         item1.setOrderItemPrice(new BigDecimal("100.00"));
@@ -71,18 +71,18 @@ public class OrderServiceImplTest {
         item2.setOrderItemPrice(new BigDecimal("150.00"));
 
         when(orderItemRepository.findAllById(orderDto.getOrderItemIds())).thenReturn(Arrays.asList(item1, item2));
-        when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0)); // returning what's passed to it
+        when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Order savedOrder = orderService.createOrder(orderDto);
         assertNotNull(savedOrder);
         assertEquals("John Doe", savedOrder.getCustomerName());
-        assertEquals(new BigDecimal("250.00"), savedOrder.getTotalPrice());  // assert that the total price calculation is correct
+        assertEquals(new BigDecimal("250.00"), savedOrder.getTotalPrice());
         assertEquals(2, savedOrder.getOrderItems().size());
     }
 
 
     @Test
-    public void testCreateOrderWithDuplicateCustomerName() {
+    public void testCreateOrder_WithDuplicateCustomerName() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("123 Street");
@@ -116,17 +116,17 @@ public class OrderServiceImplTest {
 
         when(orderRepository.findById(1L)).thenReturn(Optional.of(existingOrder));
         when(orderItemRepository.findAllById(orderDto.getOrderItemIds())).thenReturn(Arrays.asList(item3, item4));
-        when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));  // returning what's passed to it
+        when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         Order updatedOrder = orderService.updateOrder(1L, orderDto);
         assertNotNull(updatedOrder);
         assertEquals("Jane Smith", updatedOrder.getCustomerName());
-        assertEquals(new BigDecimal("500.00"), updatedOrder.getTotalPrice()); // assert that the total price calculation is correct
+        assertEquals(new BigDecimal("500.00"), updatedOrder.getTotalPrice());
         assertEquals(2, updatedOrder.getOrderItems().size());
     }
 
     @Test
-    public void testUpdateNonExistentOrder() {
+    public void testUpdate_NonExistentOrder() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("Jane Smith");
         orderDto.setAddress("789 Boulevard");
@@ -137,23 +137,23 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testDeleteNonExistentOrder() {
+    public void testDelete_NonExistentOrder() {
         when(orderRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> orderService.deleteOrder(1L));
     }
 
     @Test
-    public void testCreateOrderWithInvalidDto() {
+    public void testCreate_OrderWithInvalidDto() {
         OrderDto orderDto = new OrderDto();
-        orderDto.setCustomerName(""); // Invalid: Empty name
+        orderDto.setCustomerName("");
         orderDto.setAddress("789 Boulevard");
 
         assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(orderDto));
     }
 
     @Test
-    public void testCreateOrderWithMissingOrderItems() {
+    public void testCreateOrder_WithMissingOrderItems() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("123 Street");
@@ -162,30 +162,30 @@ public class OrderServiceImplTest {
         OrderItem item1 = new OrderItem();
         item1.setOrderItemPrice(new BigDecimal("100.00"));
 
-        when(orderItemRepository.findAllById(orderDto.getOrderItemIds())).thenReturn(Arrays.asList(item1)); // Only one item returned
+        when(orderItemRepository.findAllById(orderDto.getOrderItemIds())).thenReturn(List.of(item1));
 
         assertThrows(ResourceNotFoundException.class, () -> orderService.createOrder(orderDto));
     }
 
     @Test
-    public void testUpdateOrderWithExistingDifferentCustomerName() {
+    public void testUpdateOrder_WithExistingDifferentCustomerName() {
         OrderItem item = new OrderItem();
         item.setOrderItemPrice(new BigDecimal("200.00"));
 
         OrderDto orderDto = new OrderDto();
-        orderDto.setCustomerName("John Smith"); // Intend to change to this name
+        orderDto.setCustomerName("John Smith");
         orderDto.setAddress("789 Avenue");
         orderDto.setOrderItemIds(Arrays.asList(1L, 2L));
 
         Order existingOrder = new Order();
         existingOrder.setId(1L);
-        existingOrder.setCustomerName("Jane Smith"); // Original name
+        existingOrder.setCustomerName("Jane Smith");
         existingOrder.setAddress("789 Avenue");
         existingOrder.setOrderItems(List.of(item));
 
         Order anotherOrder = new Order();
         anotherOrder.setId(2L);
-        anotherOrder.setCustomerName("John Smith"); // Another order with the intended name
+        anotherOrder.setCustomerName("John Smith");
         anotherOrder.setAddress("789 Avenue");
         anotherOrder.setOrderItems(List.of(item));
 
@@ -196,7 +196,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testCalculateTotalPriceOnOrderCreation() {
+    public void testCalculateTotalPrice_OnOrderCreation() {
 
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
@@ -219,11 +219,11 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testRemoveOrderItemOnOrderUpdate() {
+    public void testRemoveOrder_ItemOnOrderUpdate() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("123 Street");
-        orderDto.setOrderItemIds(List.of(1L)); // Updating to have only one item
+        orderDto.setOrderItemIds(List.of(1L));
 
         Order existingOrder = new Order();
         existingOrder.setId(1L);
@@ -250,7 +250,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testAddOrderItemOnOrderUpdate() {
+    public void testAddOrderItem_OnOrderUpdate() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("123 Street");
@@ -283,13 +283,11 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    public void testUpdateOrderWithInvalidAddress() {
+    public void testUpdateOrder_WithInvalidAddress() {
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerName("John Doe");
         orderDto.setAddress("");
 
         assertThrows(IllegalArgumentException.class, () -> orderService.updateOrder(1L, orderDto));
     }
-
-
 }
