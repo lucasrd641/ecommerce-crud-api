@@ -1,6 +1,6 @@
 # Ecommerce CRUD API
 
-This is a Spring Boot application providing a RESTful API for a simple e-commerce platform, allowing CRUD operations for
+This is a Spring Boot application providing a RESTfull API for a simple e-commerce platform, allowing CRUD operations for
 products, orders, and order items. The application integrates with a PostgreSQL database using Spring Data JPA and is
 containerized using Docker.
 
@@ -14,8 +14,6 @@ containerized using Docker.
 - [Testing](#testing)
 
 ## Introduction
-
-- Since it was not mentioned in the Challenge document, I assumed the following for the data:
 - Product: Id, Name, Price, unitsInStock
 - OrderItem: Id, ProductId, Quantity, OrderItemPrice(ProductPrice * Quantity)
 - Order: Id, CustomerName, Address, ListOfOrderItems, TotalPrice(Sum of OrdemItemPrice in List)
